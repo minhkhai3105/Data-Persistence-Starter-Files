@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -10,15 +11,16 @@ public class MainManager : MonoBehaviour
     public int LineCount = 6;
     public Rigidbody Ball;
 
+    public Text BestScore;
     public Text ScoreText;
     public GameObject GameOverText;
     
     private bool m_Started = false;
     private int m_Points;
+    private string text;
     
     private bool m_GameOver = false;
 
-    
     // Start is called before the first frame update
     void Start()
     {
@@ -60,6 +62,7 @@ public class MainManager : MonoBehaviour
                 SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
             }
         }
+        BestScoreAtTime();
     }
 
     void AddPoint(int point)
@@ -67,6 +70,16 @@ public class MainManager : MonoBehaviour
         m_Points += point;
         ScoreText.text = $"Score : {m_Points}";
     }
+
+    void BestScoreAtTime()
+    {
+        if(m_Points > GameManager.Instance.bestScore)
+        {
+            GameManager.Instance.bestScore = m_Points;
+        }
+        BestScore.text = $"Best Score: {GameManager.Instance.bestScore}";
+    }
+
 
     public void GameOver()
     {
