@@ -5,17 +5,24 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.IO;
 using UnityEditor;
+using UnityEngine.SceneManagement;
+using UnityEngine.Playables;
 
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
+    public TMP_InputField inputName;
+    private MainManager mainManager;
 
     public int bestScore = 0;
+    public string nameSave;
+    public string temp;
     public TextMeshProUGUI BestScore;
-    
+
     [System.Serializable]
     class SaveData
     {
+        public string name;
         public int bestScore;
     }
     public void Awake()
@@ -30,11 +37,11 @@ public class GameManager : MonoBehaviour
             Destroy(this.gameObject);
         }
         LoadScore();
-        if(bestScore == 0)
+        if (bestScore == 0)
         {
             BestScore.text = $"   Best Score ";
         }
-        else BestScore.text = $"Best Score: {bestScore}";
+        else BestScore.text = $"Best Score: {nameSave}: {bestScore}";
     }
 
     public void SaveScore()
@@ -42,22 +49,31 @@ public class GameManager : MonoBehaviour
 
         SaveData data = new SaveData();
         data.bestScore = bestScore;
+        data.name = nameSave;
 
         string json = JsonUtility.ToJson(data);
 
-        File.WriteAllText(Application.persistentDataPath + "/test.json", json);
+        File.WriteAllText(Application.persistentDataPath + "/success.json", json);
     }
 
     public void LoadScore()
     {
-        string path = Application.persistentDataPath + "/test.json";
+        string path = Application.persistentDataPath + "/success.json";
         if (File.Exists(path))
         {
             string json = File.ReadAllText(path);
             SaveData data = JsonUtility.FromJson<SaveData>(json);
 
             bestScore = data.bestScore;
+            nameSave = data.name; 
         }
+    }
+    
+
+    public void StartGame()
+    {
+        temp = inputName.text;
+        SceneManager.LoadScene(1);
     }
 
     private void OnApplicationQuit()
